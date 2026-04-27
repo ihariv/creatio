@@ -1,0 +1,57 @@
+services:
+  postgres:
+    image: postgis/postgis:17-3.4
+    shm_size: '256mb' # Увеличиваем разделяемую память для тяжелых запросов
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=100"
+      - "-c"
+      - "max_locks_per_transaction=1024"
+      - "-c"
+      - "shared_buffers=256MB"
+      - "-c"
+      - "effective_cache_size=512MB"
+      - "-c"
+      - "work_mem=8MB"
+      - "-c"
+      - "maintenance_work_mem=128MB"
+      - "-c"
+      - "wal_compression=on"
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      TZ: UTC
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U app -d app" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: [ "redis-server", "--appendonly", "yes" ]
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  creatio:
+    image: creatio83:8.3-dev
+    build:
+      context: ../creatio # Контекст — папка с распакованным Creatio
+      dockerfile: Dockerfile
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      COMPlus_ThreadPool_ForceMinWorkerThreads: "100"
+      # Настройки Garbage Collector для экономии памяти
+#      DOTNET_gcServer: "0" # Включаем Workstation GC вместо Server GC
+#      DOTNET_GCHeapHardLimitPercent: "15" # Заставляем сборщик мусора работать активнее
+    restart: unless-stopped

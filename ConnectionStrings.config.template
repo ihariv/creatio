@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<connectionStrings>
+  <add name="db" connectionString="Server=postgres17-creatio-{{ENV}};Port=5432;Database=app;User ID=app;Password=app;Timeout=500;CommandTimeout=400;MaxPoolSize=1024;" />
+  <add name="dbPostgreSql" connectionString="Pooling=true;Database=app;Host=postgres17-creatio-{{ENV}};Port=5432;Username=app;Password=app;Timeout=500;CommandTimeout=400" />
+  <add name="redis" connectionString="host=redis7-creatio-{{ENV}};db=1;port=6379" />
+  <add name="tempDirectoryPath" connectionString="/tmp/creatio" />
+  <add name="dbMssqlCore" connectionString="Data Source=tscore-ms-01\mssql2008; Initial Catalog=BPMonlineCore; Persist Security Info=True; MultipleActiveResultSets=True; Integrated Security=SSPI; Pooling = true; Max Pool Size = 100; Async = true" />
+  <add name="elasticsearchCredentials" connectionString="User=gs-es; Password=DEQpJMfKqUVTWg9wYVgi;" />
+</connectionStrings>
